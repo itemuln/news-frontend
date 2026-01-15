@@ -1,28 +1,47 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:3000";
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
+  const hasRetried = useRef(false);
   
   const page = parseInt(searchParams.get("page")) || 1;
 
   useEffect(() => {
+    hasRetried.current = false;
     setLoading(true);
-    fetch(`http://localhost:3000/api/articles?page=${page}&limit=10`)
-      .then((res) => res.json())
-      .then((data) => {
-        setArticles(data.items || []);
-        setTotalPages(data.totalPages || 1);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setArticles([]);
-        setLoading(false);
-      });
+
+    const fetchArticles = () => {
+      fetch(`${API_BASE}/api/articles?page=${page}&limit=10`)
+        .then((res) => res.json())
+        .then((data) => {
+          const items = data.items || [];
+          const pages = data.totalPages || 1;
+
+          // Retry once after 5s if empty (cold-start)
+          if (items.length === 0 && !hasRetried.current) {
+            hasRetried.current = true;
+            setTimeout(fetchArticles, 5000);
+            return;
+          }
+
+          setArticles(items);
+          setTotalPages(pages);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setArticles([]);
+          setLoading(false);
+        });
+    };
+
+    fetchArticles();
   }, [page]);
 
   const goToPage = (newPage) => {
