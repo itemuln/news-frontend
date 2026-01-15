@@ -63,8 +63,8 @@ export default function Home() {
 
       <main className="articles-list">
         {articles.map((a) => (
-          <article key={a.id} className="article-card">
-            <Link to={`/article/${a.id}`}>
+          <article key={a.fb_post_id} className="article-card">
+            <Link to={`/article/${a.fb_post_id}`}>
               {a.image_url && (
                 <div className="article-image">
                   <img src={a.image_url} alt="" />

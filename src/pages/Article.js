@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:3000";
+
 export default function Article() {
-  const { id } = useParams();
+  const { fbPostId } = useParams();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/articles/${id}`)
+    fetch(`${API_BASE}/api/articles/by-fb/${fbPostId}`)
       .then((res) => res.json())
       .then((data) => {
         setArticle(data);
@@ -17,7 +19,7 @@ export default function Article() {
         console.error(err);
         setLoading(false);
       });
-  }, [id]);
+  }, [fbPostId]);
 
   if (loading) {
     return <div className="loading">Loading...</div>;
