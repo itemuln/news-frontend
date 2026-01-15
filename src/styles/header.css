@@ -1,0 +1,55 @@
+/* ===== Header ===== */
+.header {
+  background: #ffffff;
+  border-bottom: 1px solid #e9ecef;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo {
+  text-decoration: none;
+  text-align: center;
+}
+
+.header-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.header-tagline {
+  display: block;
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 2px;
+}
+
+/* Desktop header */
+@media (min-width: 768px) {
+  .header-container {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
+  }
+
+  .header-logo {
+    text-align: left;
+  }
+
+  .header-title {
+    font-size: 2rem;
+  }
+}

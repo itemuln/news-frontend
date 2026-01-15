@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
+import TopBar from "../components/TopBar";
 import Header from "../components/Header";
+import FeaturedNews from "../components/FeaturedNews";
+import ArticleList from "../components/ArticleList";
 import Footer from "../components/Footer";
-import ArticleCard from "../components/ArticleCard";
 import "../styles/layout.css";
-import "../styles/home.css";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:3000";
 
@@ -55,60 +56,68 @@ export default function Home() {
     window.scrollTo(0, 0);
   };
 
+  // Split articles: first 3 for featured, rest for list
+  const featuredArticles = page === 1 ? articles.slice(0, 3) : [];
+  const listArticles = page === 1 ? articles.slice(3) : articles;
+
   if (loading) {
     return (
       <div className="home">
+        <TopBar />
         <Header />
         <div className="loading">Ачаалж байна...</div>
+        <Footer />
       </div>
     );
   }
 
   return (
     <div className="home">
+      <TopBar />
       <Header />
 
-      <main className="home-content">
-        {articles.length === 0 ? (
-          <div className="empty-state">
-            <p>Мэдээ олдсонгүй</p>
-          </div>
-        ) : (
-          <div className="articles-grid">
-            {articles.map((article, index) => (
-              <ArticleCard
-                key={article.fb_post_id}
-                article={article}
-                featured={index === 0 && page === 1}
-              />
-            ))}
-          </div>
-        )}
+      {articles.length === 0 ? (
+        <div className="empty-state">
+          <p>Мэдээ олдсонгүй</p>
+        </div>
+      ) : (
+        <>
+          {/* Featured section only on page 1 */}
+          {page === 1 && featuredArticles.length > 0 && (
+            <FeaturedNews articles={featuredArticles} />
+          )}
 
-        {totalPages > 1 && (
-          <nav className="pagination">
-            <button
-              onClick={() => goToPage(page - 1)}
-              disabled={page <= 1}
-              className="pagination-btn"
-            >
-              ← Өмнөх
-            </button>
+          {/* Article list */}
+          {listArticles.length > 0 && (
+            <ArticleList articles={listArticles} />
+          )}
+        </>
+      )}
 
-            <span className="pagination-info">
-              {page} / {totalPages}
-            </span>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <nav className="pagination">
+          <button
+            onClick={() => goToPage(page - 1)}
+            disabled={page <= 1}
+            className="pagination-btn"
+          >
+            ← Өмнөх
+          </button>
 
-            <button
-              onClick={() => goToPage(page + 1)}
-              disabled={page >= totalPages}
-              className="pagination-btn"
-            >
-              Дараах →
-            </button>
-          </nav>
-        )}
-      </main>
+          <span className="pagination-info">
+            {page} / {totalPages}
+          </span>
+
+          <button
+            onClick={() => goToPage(page + 1)}
+            disabled={page >= totalPages}
+            className="pagination-btn"
+          >
+            Дараах →
+          </button>
+        </nav>
+      )}
 
       <Footer />
     </div>

@@ -1,0 +1,75 @@
+/* ===== Top Bar ===== */
+.topbar {
+  background: #1a1a2e;
+  color: #ffffff;
+  font-size: 0.8rem;
+  display: none;
+}
+
+.topbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.topbar-email {
+  color: #ffffff;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.topbar-email:hover {
+  opacity: 0.8;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-phone {
+  color: #adb5bd;
+}
+
+.topbar-divider {
+  color: #495057;
+}
+
+.topbar-social {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+}
+
+.topbar-social-link {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background 0.2s;
+}
+
+.topbar-social-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Show on desktop */
+@media (min-width: 768px) {
+  .topbar {
+    display: block;
+  }
+}

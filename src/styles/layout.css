@@ -32,81 +32,15 @@ img {
   display: block;
 }
 
-/* ===== Layout Container ===== */
-.container {
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-
-/* ===== Header ===== */
-.header {
-  background: #ffffff;
-  border-bottom: 1px solid #e9ecef;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-container {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 16px;
-  text-align: center;
-}
-
-.header-logo {
-  display: inline-block;
-}
-
-.header-logo h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #1a1a2e;
-  letter-spacing: -0.5px;
-}
-
-.header-tagline {
-  display: block;
-  font-size: 0.8rem;
-  color: #6c757d;
-  margin-top: 2px;
-}
-
-/* ===== Footer ===== */
-.footer {
-  background: #1a1a2e;
-  color: #ffffff;
-  padding: 32px 16px;
-  margin-top: 48px;
-}
-
-.footer-container {
-  max-width: 720px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.footer-text {
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.footer-subtext {
-  font-size: 0.8rem;
-  color: #adb5bd;
-  margin-top: 4px;
-}
-
 /* ===== Loading State ===== */
 .loading {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 60vh;
+  min-height: 50vh;
   color: #6c757d;
+  font-size: 1rem;
 }
 
 .loading::after {
@@ -126,10 +60,22 @@ img {
   }
 }
 
+/* ===== Empty State ===== */
+.empty-state {
+  text-align: center;
+  padding: 64px 20px;
+  color: #6c757d;
+}
+
 /* ===== Not Found ===== */
 .not-found {
   text-align: center;
-  padding: 64px 16px;
+  padding: 64px 20px;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .not-found h1 {
@@ -145,4 +91,44 @@ img {
 
 .not-found a:hover {
   text-decoration: underline;
+}
+
+/* ===== Pagination ===== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 20px;
+  background: #ffffff;
+}
+
+.pagination-btn {
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #1a1a2e;
+  border-color: #1a1a2e;
+  color: #ffffff;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 0.9rem;
+  color: #6c757d;
+  min-width: 80px;
+  text-align: center;
 }
