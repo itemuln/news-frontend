@@ -1,11 +1,14 @@
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import "../styles/featured.css";
 
 export default function FeaturedNews({ articles }) {
-  if (!articles || articles.length === 0) return null;
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
-  const heroArticle = articles[0];
-  const sideArticles = articles.slice(1, 3);
+  // Use all articles for the carousel (or limit to first 5)
+  const carouselArticles = articles.slice(0, 5);
+  const totalSlides = carouselArticles.length;
 
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("mn-MN", {
@@ -15,46 +18,108 @@ export default function FeaturedNews({ articles }) {
     });
   };
 
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  }, [totalSlides]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  }, [totalSlides]);
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  // Auto-slide every 5 seconds
+  useEffect(() => {
+    if (isPaused || totalSlides <= 1) return;
+
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, nextSlide, totalSlides]);
+
+  if (!articles || articles.length === 0) return null;
+
   return (
     <section className="featured">
       <div className="featured-container">
-        {/* Hero Article */}
-        <article className="featured-hero">
-          <Link to={`/article/${heroArticle.fb_post_id}`} className="featured-hero-link">
-            {heroArticle.image_url && (
-              <div className="featured-hero-image">
-                <img src={heroArticle.image_url} alt="" loading="eager" />
-              </div>
-            )}
-            <div className="featured-hero-content">
-              <h2 className="featured-hero-title">{heroArticle.headline}</h2>
-              <time className="featured-hero-date">{formatDate(heroArticle.published_at)}</time>
-              <span className="featured-link-text">Дэлгэрэнгүй →</span>
-            </div>
-          </Link>
-        </article>
-
-        {/* Side Articles */}
-        {sideArticles.length > 0 && (
-          <div className="featured-side">
-            {sideArticles.map((article) => (
-              <article key={article.fb_post_id} className="featured-card">
-                <Link to={`/article/${article.fb_post_id}`} className="featured-card-link">
+        {/* Carousel/Slider */}
+        <div 
+          className="featured-carousel"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <div 
+            className="carousel-track"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {carouselArticles.map((article, index) => (
+              <article 
+                key={article.fb_post_id} 
+                className="carousel-slide"
+                aria-hidden={index !== currentSlide}
+              >
+                <Link to={`/article/${article.fb_post_id}`} className="carousel-link">
                   {article.image_url && (
-                    <div className="featured-card-image">
-                      <img src={article.image_url} alt="" loading="lazy" />
+                    <div className="carousel-image">
+                      <img 
+                        src={article.image_url} 
+                        alt="" 
+                        loading={index === 0 ? "eager" : "lazy"} 
+                      />
                     </div>
                   )}
-                  <div className="featured-card-content">
-                    <h3 className="featured-card-title">{article.headline}</h3>
-                    <time className="featured-card-date">{formatDate(article.published_at)}</time>
-                    <span className="featured-link-text">Дэлгэрэнгүй →</span>
+                  <div className="carousel-content">
+                    <h2 className="carousel-title">{article.headline}</h2>
+                    <time className="carousel-date">{formatDate(article.published_at)}</time>
+                    <span className="carousel-btn">Дэлгэрэнгүй</span>
                   </div>
                 </Link>
               </article>
             ))}
           </div>
-        )}
+
+          {/* Navigation Arrows */}
+          {totalSlides > 1 && (
+            <>
+              <button 
+                className="carousel-arrow carousel-prev" 
+                onClick={prevSlide}
+                aria-label="Өмнөх мэдээ"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                  <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+              </button>
+              <button 
+                className="carousel-arrow carousel-next" 
+                onClick={nextSlide}
+                aria-label="Дараагийн мэдээ"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                  <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+                </svg>
+              </button>
+            </>
+          )}
+
+          {/* Dots Indicator */}
+          {totalSlides > 1 && (
+            <div className="carousel-dots">
+              {carouselArticles.map((_, index) => (
+                <button
+                  key={index}
+                  className={`carousel-dot ${index === currentSlide ? 'active' : ''}`}
+                  onClick={() => goToSlide(index)}
+                  aria-label={`Мэдээ ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
