@@ -2,6 +2,29 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Environment Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `REACT_APP_API_BASE` | Backend API URL (no trailing slash) | `https://news-backend-0far.onrender.com` |
+
+### Local Development
+
+Create a `.env` file in the project root (optional, defaults to `http://localhost:3000`):
+
+```
+REACT_APP_API_BASE=http://localhost:3000
+```
+
+### Vercel Deployment
+
+1. Go to your Vercel project → **Settings** → **Environment Variables**
+2. Add:
+   - **Name**: `REACT_APP_API_BASE`
+   - **Value**: `https://news-backend-0far.onrender.com`
+3. Click **Save**
+4. Redeploy the project for changes to take effect
+
 ## Available Scripts
 
 In the project directory, you can run:

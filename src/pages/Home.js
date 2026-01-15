@@ -1,5 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import ArticleCard from "../components/ArticleCard";
+import "../styles/layout.css";
+import "../styles/home.css";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:3000";
 
@@ -9,7 +14,7 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
   const hasRetried = useRef(false);
-  
+
   const page = parseInt(searchParams.get("page")) || 1;
 
   useEffect(() => {
@@ -51,57 +56,61 @@ export default function Home() {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="home">
+        <Header />
+        <div className="loading">Ачаалж байна...</div>
+      </div>
+    );
   }
 
   return (
     <div className="home">
-      <header className="site-header">
-        <h1>MKOR News</h1>
-        <p>Солонгос хөтөч</p>
-      </header>
+      <Header />
 
-      <main className="articles-list">
-        {articles.map((a) => (
-          <article key={a.fb_post_id} className="article-card">
-            <Link to={`/article/${a.fb_post_id}`}>
-              {a.image_url && (
-                <div className="article-image">
-                  <img src={a.image_url} alt="" />
-                </div>
-              )}
-              <div className="article-content">
-                <h2>{a.headline}</h2>
-                <time>{new Date(a.published_at).toLocaleString("mn-MN")}</time>
-              </div>
-            </Link>
-          </article>
-        ))}
+      <main className="home-content">
+        {articles.length === 0 ? (
+          <div className="empty-state">
+            <p>Мэдээ олдсонгүй</p>
+          </div>
+        ) : (
+          <div className="articles-grid">
+            {articles.map((article, index) => (
+              <ArticleCard
+                key={article.fb_post_id}
+                article={article}
+                featured={index === 0 && page === 1}
+              />
+            ))}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <nav className="pagination">
+            <button
+              onClick={() => goToPage(page - 1)}
+              disabled={page <= 1}
+              className="pagination-btn"
+            >
+              ← Өмнөх
+            </button>
+
+            <span className="pagination-info">
+              {page} / {totalPages}
+            </span>
+
+            <button
+              onClick={() => goToPage(page + 1)}
+              disabled={page >= totalPages}
+              className="pagination-btn"
+            >
+              Дараах →
+            </button>
+          </nav>
+        )}
       </main>
 
-      {totalPages > 1 && (
-        <nav className="pagination">
-          <button 
-            onClick={() => goToPage(page - 1)} 
-            disabled={page <= 1}
-            className="pagination-btn"
-          >
-            ← Previous
-          </button>
-          
-          <span className="pagination-info">
-            Page {page} of {totalPages}
-          </span>
-          
-          <button 
-            onClick={() => goToPage(page + 1)} 
-            disabled={page >= totalPages}
-            className="pagination-btn"
-          >
-            Next →
-          </button>
-        </nav>
-      )}
+      <Footer />
     </div>
   );
 }

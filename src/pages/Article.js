@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import "../styles/layout.css";
+import "../styles/article.css";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:3000";
 
@@ -22,60 +26,72 @@ export default function Article() {
   }, [fbPostId]);
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="article-page">
+        <Header />
+        <div className="loading">Ачаалж байна...</div>
+      </div>
+    );
   }
 
-  if (!article) {
+  if (!article || article.error) {
     return (
-      <div className="not-found">
-        <h1>Article not found</h1>
-        <Link to="/">← Back to home</Link>
+      <div className="article-page">
+        <Header />
+        <div className="not-found">
+          <h1>Мэдээ олдсонгүй</h1>
+          <Link to="/">← Нүүр хуудас руу буцах</Link>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
     <div className="article-page">
-      <header className="site-header">
-        <Link to="/">
-          <h1>MKOR News</h1>
-        </Link>
-      </header>
+      <Header />
 
-      <main className="article-detail">
-        <article>
+      <article className="article-content">
+        <header className="article-header">
           <h1 className="article-title">{article.headline}</h1>
-          
-          <time className="article-date">
-            {new Date(article.published_at).toLocaleString("mn-MN")}
-          </time>
-
-          {article.image_url && (
-            <div className="article-hero">
-              <img src={article.image_url} alt="" />
-            </div>
-          )}
-
-          <div className="article-body">
-            {article.body}
+          <div className="article-meta">
+            <time className="article-date">
+              {new Date(article.published_at).toLocaleDateString("mn-MN", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
           </div>
+        </header>
 
-          <footer className="article-footer">
-            <a 
-              href={article.source_url} 
-              target="_blank" 
-              rel="noreferrer"
-              className="source-link"
-            >
-              View original on Facebook
-            </a>
-          </footer>
-        </article>
+        {article.image_url && (
+          <figure className="article-hero">
+            <img src={article.image_url} alt="" />
+          </figure>
+        )}
 
-        <nav className="back-nav">
-          <Link to="/">← Back to all news</Link>
-        </nav>
-      </main>
+        <div className="article-body">{article.body}</div>
+
+        <footer className="article-footer">
+          <a
+            href={article.source_url}
+            target="_blank"
+            rel="noreferrer"
+            className="source-link"
+          >
+            Facebook дээр үзэх →
+          </a>
+        </footer>
+      </article>
+
+      <nav className="back-nav">
+        <Link to="/" className="back-link">
+          ← Бүх мэдээ рүү буцах
+        </Link>
+      </nav>
+
+      <Footer />
     </div>
   );
 }
