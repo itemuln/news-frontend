@@ -18,14 +18,27 @@
 }
 
 .header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   text-decoration: none;
   text-align: center;
+}
+
+.header-logo-img {
+  height: 50px;
+  width: auto;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .header-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #A51C30;
   letter-spacing: -0.5px;
   margin: 0;
 }
@@ -47,6 +60,10 @@
 
   .header-logo {
     text-align: left;
+  }
+
+  .header-logo-img {
+    height: 60px;
   }
 
   .header-title {

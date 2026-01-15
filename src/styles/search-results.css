@@ -1,0 +1,143 @@
+/* ===== Search Results Page ===== */
+.search-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-page-content {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  width: 100%;
+  display: flex;
+  gap: 32px;
+}
+
+.search-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.search-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #212529;
+  margin: 0 0 8px 0;
+}
+
+.search-count {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  padding: 48px 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.no-results p {
+  font-size: 1.1rem;
+  color: #495057;
+  margin: 0 0 16px 0;
+}
+
+.no-results a {
+  color: #A51C30;
+  font-weight: 500;
+}
+
+/* Search Results List */
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.search-result-item {
+  display: flex;
+  gap: 20px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.result-image {
+  width: 180px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.result-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.result-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.result-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+  transition: color 0.2s;
+}
+
+.result-title:hover {
+  color: #A51C30;
+}
+
+.result-date {
+  display: block;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 8px;
+}
+
+.result-excerpt {
+  font-size: 0.9rem;
+  color: #495057;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.result-link {
+  color: #A51C30;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.result-link:hover {
+  text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .search-result-item {
+    flex-direction: column;
+  }
+
+  .result-image {
+    width: 100%;
+    height: 180px;
+  }
+}

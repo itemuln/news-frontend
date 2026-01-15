@@ -27,7 +27,7 @@
 
 .back-to-home {
   display: inline-block;
-  color: #0066cc;
+  color: #A51C30;
   text-decoration: none;
   font-size: 0.9rem;
   margin-bottom: 1rem;
@@ -35,7 +35,7 @@
 }
 
 .back-to-home:hover {
-  color: #004999;
+  color: #8C1515;
 }
 
 .article-title {
@@ -143,7 +143,7 @@
 }
 
 .not-found a {
-  color: #0066cc;
+  color: #A51C30;
   text-decoration: none;
 }
 

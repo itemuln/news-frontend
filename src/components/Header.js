@@ -7,8 +7,9 @@ export default function Header() {
     <header className="header">
       <div className="header-container">
         <Link to="/" className="header-logo">
-          <h1 className="header-title">MKOR News</h1>
-          <span className="header-tagline">Солонгос хөтөч</span>
+          <img src="/logo.png" alt="MKOR News" className="header-logo-img" />
+          <div className="header-text">
+          </div>
         </Link>
         <Nav />
       </div>

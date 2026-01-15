@@ -4,8 +4,10 @@ import TopBar from "../components/TopBar";
 import Header from "../components/Header";
 import FeaturedNews from "../components/FeaturedNews";
 import ArticleList from "../components/ArticleList";
+import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import "../styles/layout.css";
+import "../styles/home.css";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:3000";
 
@@ -76,48 +78,54 @@ export default function Home() {
       <TopBar />
       <Header />
 
-      {articles.length === 0 ? (
-        <div className="empty-state">
-          <p>Мэдээ олдсонгүй</p>
-        </div>
-      ) : (
-        <>
-          {/* Featured section only on page 1 */}
-          {page === 1 && featuredArticles.length > 0 && (
-            <FeaturedNews articles={featuredArticles} />
+      <div className="home-content">
+        <main className="home-main">
+          {articles.length === 0 ? (
+            <div className="empty-state">
+              <p>Мэдээ олдсонгүй</p>
+            </div>
+          ) : (
+            <>
+              {/* Featured section only on page 1 */}
+              {page === 1 && featuredArticles.length > 0 && (
+                <FeaturedNews articles={featuredArticles} />
+              )}
+
+              {/* Article list */}
+              {listArticles.length > 0 && (
+                <ArticleList articles={listArticles} />
+              )}
+            </>
           )}
 
-          {/* Article list */}
-          {listArticles.length > 0 && (
-            <ArticleList articles={listArticles} />
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <nav className="pagination">
+              <button
+                onClick={() => goToPage(page - 1)}
+                disabled={page <= 1}
+                className="pagination-btn"
+              >
+                ← Өмнөх
+              </button>
+
+              <span className="pagination-info">
+                {page} / {totalPages}
+              </span>
+
+              <button
+                onClick={() => goToPage(page + 1)}
+                disabled={page >= totalPages}
+                className="pagination-btn"
+              >
+                Дараах →
+              </button>
+            </nav>
           )}
-        </>
-      )}
+        </main>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <nav className="pagination">
-          <button
-            onClick={() => goToPage(page - 1)}
-            disabled={page <= 1}
-            className="pagination-btn"
-          >
-            ← Өмнөх
-          </button>
-
-          <span className="pagination-info">
-            {page} / {totalPages}
-          </span>
-
-          <button
-            onClick={() => goToPage(page + 1)}
-            disabled={page >= totalPages}
-            className="pagination-btn"
-          >
-            Дараах →
-          </button>
-        </nav>
-      )}
+        <Sidebar />
+      </div>
 
       <Footer />
     </div>

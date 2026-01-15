@@ -16,7 +16,7 @@
   color: #212529;
   margin: 0;
   padding-bottom: 12px;
-  border-bottom: 2px solid #1a1a2e;
+  border-bottom: 2px solid #A51C30;
   display: inline-block;
 }
 
@@ -61,7 +61,7 @@
 }
 
 .list-item-link:hover .list-item-title {
-  color: #1a1a2e;
+  color: #A51C30;
 }
 
 .list-item-excerpt {
@@ -86,7 +86,7 @@
 .list-item-button {
   display: inline-block;
   padding: 8px 16px;
-  background: #1a1a2e;
+  background: #A51C30;
   color: #ffffff;
   font-size: 0.85rem;
   font-weight: 500;
@@ -96,7 +96,7 @@
 }
 
 .list-item-button:hover {
-  background: #2d2d4a;
+  background: #8C1515;
 }
 
 .list-item-image {

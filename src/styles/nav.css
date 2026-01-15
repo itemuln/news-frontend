@@ -30,11 +30,11 @@
 
 .nav-link:hover {
   background: #f8f9fa;
-  color: #1a1a2e;
+  color: #A51C30;
 }
 
 .nav-link.active {
-  background: #1a1a2e;
+  background: #A51C30;
   color: #ffffff;
 }
 

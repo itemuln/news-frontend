@@ -1,6 +1,6 @@
 /* ===== Footer ===== */
 .footer {
-  background: #1a1a2e;
+  background: #A51C30;
   color: #ffffff;
   padding: 48px 0 0;
 }
@@ -75,7 +75,7 @@
 
 /* Footer Bottom */
 .footer-bottom {
-  border-top: 1px solid #2d2d4a;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding: 20px 0;
   text-align: center;
 }

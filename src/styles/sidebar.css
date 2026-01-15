@@ -1,0 +1,98 @@
+/* ===== Sidebar ===== */
+.sidebar {
+  display: none;
+  width: 320px;
+  flex-shrink: 0;
+}
+
+.sidebar-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.sidebar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #A51C30;
+}
+
+/* Banners */
+.sidebar-banners {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar-banner {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8f9fa;
+  position: relative;
+  min-height: 120px;
+}
+
+.sidebar-banner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: opacity 0.3s;
+}
+
+.sidebar-banner:hover img {
+  opacity: 0.9;
+}
+
+.banner-placeholder-text {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  font-size: 0.9rem;
+  background: #f0f0f0;
+}
+
+.sidebar-banner.banner-placeholder .banner-placeholder-text {
+  display: flex;
+}
+
+/* Facebook button */
+.sidebar-social {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.facebook-follow-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #1877f2;
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.facebook-follow-btn:hover {
+  background: #166fe5;
+}
+
+/* Show sidebar on desktop */
+@media (min-width: 1024px) {
+  .sidebar {
+    display: block;
+  }
+}
