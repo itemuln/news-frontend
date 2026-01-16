@@ -10,12 +10,11 @@ export default function TopBar() {
           </a>
         </div>
         <div className="topbar-right">
-          <span className="topbar-phone">010-4181-7096</span>
           <span className="topbar-divider">|</span>
           <span className="topbar-phone">976-9665-0493</span>
           <div className="topbar-social">
             <a
-              href="https://facebook.com"
+              href="https://www.facebook.com/mkormn"
               target="_blank"
               rel="noreferrer"
               className="topbar-social-link"
@@ -26,7 +25,7 @@ export default function TopBar() {
               </svg>
             </a>
             <a
-              href="https://youtube.com"
+              href="https://www.youtube.com/@mkor6224"
               target="_blank"
               rel="noreferrer"
               className="topbar-social-link"

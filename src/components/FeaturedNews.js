@@ -6,8 +6,8 @@ export default function FeaturedNews({ articles }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Use all articles for the carousel (or limit to first 5)
-  const carouselArticles = articles.slice(0, 5);
+  // Only use articles with images for the carousel (limit to 5)
+  const carouselArticles = articles.filter(a => a.image_url).slice(0, 5);
   const totalSlides = carouselArticles.length;
 
   const formatDate = (dateStr) => {
@@ -63,15 +63,13 @@ export default function FeaturedNews({ articles }) {
                 aria-hidden={index !== currentSlide}
               >
                 <Link to={`/article/${article.fb_post_id}`} className="carousel-link">
-                  {article.image_url && (
-                    <div className="carousel-image">
-                      <img 
-                        src={article.image_url} 
-                        alt="" 
-                        loading={index === 0 ? "eager" : "lazy"} 
-                      />
-                    </div>
-                  )}
+                  <div className="carousel-image">
+                    <img 
+                      src={article.image_url} 
+                      alt="" 
+                      loading={index === 0 ? "eager" : "lazy"} 
+                    />
+                  </div>
                   <div className="carousel-content">
                     <h2 className="carousel-title">{article.headline}</h2>
                     <time className="carousel-date">{formatDate(article.published_at)}</time>

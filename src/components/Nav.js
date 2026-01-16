@@ -6,7 +6,7 @@ export default function Nav() {
 
   const navItems = [
     { label: "Эхлэл", path: "/" },
-    { label: "Мэдээ, мэдээлэл", path: "/" },
+    { label: "Мэдээ", path: "/news" },
     { label: "Холбогдох", path: "/contact" },
   ];
 
