@@ -85,18 +85,6 @@ export default function Article() {
               paragraph.trim() && <p key={idx}>{paragraph}</p>
             ))}
           </div>
-
-          <footer className="article-footer">
-            <a
-              href={article.source_url}
-              target="_blank"
-              rel="noreferrer"
-              className="source-link"
-            >
-              <span className="fb-icon">f</span>
-              Facebook дээр үзэх
-            </a>
-          </footer>
         </article>
       </main>
 

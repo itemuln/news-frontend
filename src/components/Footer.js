@@ -5,45 +5,41 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer-container">
-        <div className="footer-main">
-          <div className="footer-about">
-            <Link to="/" className="footer-logo">
-              <h3>MKOR News</h3>
-            </Link>
-            <p className="footer-description">
-              Солонгос дахь Монголчуудын албан ёсны эх сурвалжтай мэдээ мэдээллийн нэгдсэн төв сүлжээ.
-            </p>
-          </div>
-
-          <div className="footer-contact">
-            <h4 className="footer-heading">Холбоо барих</h4>
-            <ul className="footer-contact-list">
-              <li>
-                <a href="mailto:info@mkor.mn">info@mkor.mn</a>
-              </li>
-              <li>
-                <a href="tel:010-4181-7096">010-4181-7096</a>
-              </li>
-              <li>
-                <a href="tel:976-9665-0493">976-9665-0493</a>
-              </li>
-            </ul>
-          </div>
-
-          <div className="footer-links">
-            <h4 className="footer-heading">Холбоосууд</h4>
-            <ul className="footer-nav-list">
-              <li><Link to="/">Эхлэл</Link></li>
-              <li><Link to="/">Мэдээ, мэдээлэл</Link></li>
-              <li><Link to="/contact">Холбогдох</Link></li>
-            </ul>
-          </div>
+        {/* Left Column - Logo & Text */}
+        <div className="footer-left">
+          <Link to="/" className="footer-logo">
+            <img src="/footer.png" alt="MKOR News" />
+          </Link>
+          <p className="footer-description">
+            Солонгос дахь Монголчуудын албан ёсны эх сурвалжтай мэдээ мэдээллийн нэгдсэн төв сүлжээ.
+          </p>
+          <p className="footer-copyright">
+            Бүх эрх хуулиар баталгаажсан. 2018 он
+          </p>
         </div>
 
-        <div className="footer-bottom">
-          <p className="footer-copyright">
-            © {new Date().getFullYear()} MKOR News. Бүх эрх хуулиар хамгаалагдсан.
-          </p>
+        {/* Right Column - Contact */}
+        <div className="footer-right">
+          <ul className="footer-contact-list">
+            <li>
+              <svg viewBox="0 0 512 512" fill="currentColor">
+                <path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/>
+              </svg>
+              <span>info@mkor.mn</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 448 512" fill="currentColor">
+                <path d="M400 32H48A48 48 0 0 0 0 80v352a48 48 0 0 0 48 48h352a48 48 0 0 0 48-48V80a48 48 0 0 0-48-48zm-16.39 307.37l-15 65A15 15 0 0 1 354 416C194 416 64 286.29 64 126a15.7 15.7 0 0 1 11.63-14.61l65-15A18.23 18.23 0 0 1 144 96a16.27 16.27 0 0 1 13.79 9.09l30 70A17.9 17.9 0 0 1 189 181a17 17 0 0 1-5.5 11.61l-37.89 31a231.91 231.91 0 0 0 110.78 110.78l31-37.89A17 17 0 0 1 299 291a17.85 17.85 0 0 1 5.91 1.21l70 30A16.25 16.25 0 0 1 384 336a17.41 17.41 0 0 1-.39 3.37z"/>
+              </svg>
+              <span>010-4181-7096</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 448 512" fill="currentColor">
+                <path d="M400 32H48A48 48 0 0 0 0 80v352a48 48 0 0 0 48 48h352a48 48 0 0 0 48-48V80a48 48 0 0 0-48-48zm-16.39 307.37l-15 65A15 15 0 0 1 354 416C194 416 64 286.29 64 126a15.7 15.7 0 0 1 11.63-14.61l65-15A18.23 18.23 0 0 1 144 96a16.27 16.27 0 0 1 13.79 9.09l30 70A17.9 17.9 0 0 1 189 181a17 17 0 0 1-5.5 11.61l-37.89 31a231.91 231.91 0 0 0 110.78 110.78l31-37.89A17 17 0 0 1 299 291a17.85 17.85 0 0 1 5.91 1.21l70 30A16.25 16.25 0 0 1 384 336a17.41 17.41 0 0 1-.39 3.37z"/>
+              </svg>
+              <span>976-9665-0493</span>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>
