@@ -39,7 +39,6 @@ export default function News() {
   return (
     <>
       <Header />
-      <Nav />
       <main className="news-page">
         <div className="news-page-container">
           <h1 className="news-page-title">Бүх мэдээ</h1>
