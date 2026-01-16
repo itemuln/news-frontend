@@ -73,7 +73,6 @@ export default function FeaturedNews({ articles }) {
                   <div className="carousel-content">
                     <h2 className="carousel-title">{article.headline}</h2>
                     <time className="carousel-date">{formatDate(article.published_at)}</time>
-                    <span className="carousel-btn">Дэлгэрэнгүй</span>
                   </div>
                 </Link>
               </article>
