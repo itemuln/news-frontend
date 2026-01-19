@@ -12,6 +12,12 @@ export default function AdminDashboard() {
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
+  // Banner modal state
+  const [showBannerModal, setShowBannerModal] = useState(false);
+  const [bannerArticleId, setBannerArticleId] = useState("");
+  const [bannerUrl, setBannerUrl] = useState("");
+  const [bannerUploading, setBannerUploading] = useState(false);
+
   const token = localStorage.getItem("adminToken");
   const adminUser = localStorage.getItem("adminUser");
 
@@ -120,6 +126,99 @@ export default function AdminDashboard() {
     });
   };
 
+  // Banner functions
+  const handleAddBannerByUrl = async () => {
+    if (!bannerArticleId || !bannerUrl.trim()) {
+      alert("Мэдээ болон URL сонгоно уу");
+      return;
+    }
+
+    setBannerUploading(true);
+    try {
+      // Add media to article
+      const res = await fetch(`${API}/api/admin/articles/${bannerArticleId}/media`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          url: bannerUrl,
+          media_type: "image",
+          position: 0,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to add media");
+      
+      const newMedia = await res.json();
+
+      // Set as banner
+      await fetch(`${API}/api/admin/articles/${bannerArticleId}/banner`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ banner_media_id: newMedia.id }),
+      });
+
+      alert("Banner амжилттай нэмэгдлээ!");
+      setShowBannerModal(false);
+      setBannerArticleId("");
+      setBannerUrl("");
+      fetchArticles();
+    } catch (err) {
+      alert("Banner нэмэхэд алдаа гарлаа");
+    } finally {
+      setBannerUploading(false);
+    }
+  };
+
+  const handleBannerFileUpload = async (file) => {
+    if (!bannerArticleId || !file) {
+      alert("Мэдээ сонгоно уу");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("position", 0);
+
+    setBannerUploading(true);
+    try {
+      const res = await fetch(`${API}/api/admin/articles/${bannerArticleId}/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+      
+      const newMedia = await res.json();
+
+      // Set as banner
+      await fetch(`${API}/api/admin/articles/${bannerArticleId}/banner`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ banner_media_id: newMedia.id }),
+      });
+
+      alert("Banner амжилттай нэмэгдлээ!");
+      setShowBannerModal(false);
+      setBannerArticleId("");
+      setBannerUrl("");
+      fetchArticles();
+    } catch (err) {
+      alert("Banner оруулахад алдаа гарлаа");
+    } finally {
+      setBannerUploading(false);
+    }
+  };
+
   return (
     <div className="admin-dashboard">
       <header className="admin-header">
@@ -136,10 +235,87 @@ export default function AdminDashboard() {
         <Link to="/admin/articles/new" className="admin-btn primary">
           + Шинэ мэдээ
         </Link>
+        <button 
+          onClick={() => setShowBannerModal(true)} 
+          className="admin-btn banner-btn"
+        >
+          🖼️ Banner нэмэх
+        </button>
         <Link to="/" className="admin-btn secondary">
           ← Сайт руу буцах
         </Link>
       </div>
+
+      {/* Banner Modal */}
+      {showBannerModal && (
+        <div className="modal-overlay" onClick={() => setShowBannerModal(false)}>
+          <div className="modal-content banner-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>🖼️ Banner нэмэх</h2>
+              <button 
+                className="modal-close" 
+                onClick={() => setShowBannerModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              {/* Select Article */}
+              <div className="form-group">
+                <label>Мэдээ сонгох *</label>
+                <select
+                  value={bannerArticleId}
+                  onChange={(e) => setBannerArticleId(e.target.value)}
+                >
+                  <option value="">-- Мэдээ сонгоно уу --</option>
+                  {articles.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.headline?.slice(0, 50)}...
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Upload File */}
+              <div className="form-group">
+                <label>Файлаас оруулах</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleBannerFileUpload(e.target.files[0])}
+                  disabled={!bannerArticleId || bannerUploading}
+                />
+              </div>
+
+              <div className="modal-divider">
+                <span>эсвэл</span>
+              </div>
+
+              {/* URL Input */}
+              <div className="form-group">
+                <label>URL хаягаар нэмэх</label>
+                <input
+                  type="url"
+                  value={bannerUrl}
+                  onChange={(e) => setBannerUrl(e.target.value)}
+                  placeholder="https://example.com/image.jpg"
+                  disabled={bannerUploading}
+                />
+              </div>
+
+              <button
+                onClick={handleAddBannerByUrl}
+                disabled={!bannerArticleId || !bannerUrl.trim() || bannerUploading}
+                className="admin-btn primary large"
+                style={{ width: "100%" }}
+              >
+                {bannerUploading ? "Оруулж байна..." : "URL-ээр нэмэх"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {error && <div className="admin-error">{error}</div>}
 
