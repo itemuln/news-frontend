@@ -15,8 +15,13 @@ export default function AdminArticleForm() {
   const [isFeatured, setIsFeatured] = useState(false);
   const [featuredPosition, setFeaturedPosition] = useState(0);
   const [bannerMediaId, setBannerMediaId] = useState(null);
+  const [bannerUrl, setBannerUrl] = useState(""); // Direct banner URL
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Banner upload state
+  const [bannerUploading, setBannerUploading] = useState(false);
+  const [newBannerUrl, setNewBannerUrl] = useState("");
 
   // Media management
   const [media, setMedia] = useState([]);
@@ -45,6 +50,11 @@ export default function AdminArticleForm() {
           setFeaturedPosition(data.featured_position || 0);
           setBannerMediaId(data.banner_media_id || null);
           setMedia(data.media || []);
+          // Find banner URL from media
+          if (data.banner_media_id && data.media) {
+            const bannerMedia = data.media.find(m => m.id === data.banner_media_id);
+            if (bannerMedia) setBannerUrl(bannerMedia.url);
+          }
         })
         .catch(() => setError("Мэдээ ачаалахад алдаа гарлаа"));
     }
@@ -220,9 +230,102 @@ export default function AdminArticleForm() {
 
       if (res.ok) {
         setBannerMediaId(mediaId);
+        // Update banner URL for preview
+        const bannerMedia = media.find(m => m.id === mediaId);
+        if (bannerMedia) setBannerUrl(bannerMedia.url);
       }
     } catch (err) {
       alert("Banner тохируулахад алдаа гарлаа");
+    }
+  };
+
+  // Upload banner file
+  const handleBannerUpload = async (file) => {
+    if (!isEdit || !file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("position", 0);
+
+    setBannerUploading(true);
+    try {
+      const res = await fetch(`${API}/api/admin/articles/${id}/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (res.ok) {
+        const newMedia = await res.json();
+        setMedia([...media, newMedia]);
+        // Automatically set as banner
+        await handleSetBanner(newMedia.id);
+        setBannerUrl(newMedia.url);
+      } else {
+        const data = await res.json();
+        throw new Error(data.error || "Upload failed");
+      }
+    } catch (err) {
+      alert(`Banner оруулахад алдаа: ${err.message}`);
+    } finally {
+      setBannerUploading(false);
+    }
+  };
+
+  // Add banner by URL
+  const handleAddBannerUrl = async () => {
+    if (!newBannerUrl.trim() || !isEdit) return;
+
+    setBannerUploading(true);
+    try {
+      const res = await fetch(`${API}/api/admin/articles/${id}/media`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          url: newBannerUrl,
+          media_type: "image",
+          position: 0,
+        }),
+      });
+
+      if (res.ok) {
+        const newMedia = await res.json();
+        setMedia([...media, newMedia]);
+        // Automatically set as banner
+        await handleSetBanner(newMedia.id);
+        setBannerUrl(newBannerUrl);
+        setNewBannerUrl("");
+      } else {
+        throw new Error("Failed to add banner");
+      }
+    } catch (err) {
+      alert("Banner нэмэхэд алдаа гарлаа");
+    } finally {
+      setBannerUploading(false);
+    }
+  };
+
+  // Remove banner
+  const handleRemoveBanner = async () => {
+    try {
+      const res = await fetch(`${API}/api/admin/articles/${id}/banner`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ banner_media_id: null }),
+      });
+
+      if (res.ok) {
+        setBannerMediaId(null);
+        setBannerUrl("");
+      }
+    } catch (err) {
+      alert("Алдаа гарлаа");
     }
   };
 
@@ -268,6 +371,69 @@ export default function AdminArticleForm() {
             placeholder="Мэдээний гарчиг"
           />
         </div>
+
+        {/* BANNER SECTION - Dedicated */}
+        {isEdit && (
+          <div className="banner-section">
+            <h3>🖼️ Banner зураг</h3>
+            
+            {/* Current Banner Preview */}
+            {bannerUrl ? (
+              <div className="current-banner">
+                <img src={bannerUrl} alt="Current banner" />
+                <button 
+                  type="button" 
+                  onClick={handleRemoveBanner}
+                  className="remove-banner-btn"
+                >
+                  ✕ Хасах
+                </button>
+              </div>
+            ) : (
+              <div className="no-banner">
+                <p>Banner зураг оруулаагүй байна</p>
+              </div>
+            )}
+
+            {/* Upload Banner */}
+            <div className="banner-upload-area">
+              <input
+                type="file"
+                id="bannerFileInput"
+                accept="image/*"
+                onChange={(e) => handleBannerUpload(e.target.files[0])}
+                style={{ display: "none" }}
+              />
+              <label htmlFor="bannerFileInput" className="admin-btn primary">
+                {bannerUploading ? "Оруулж байна..." : "📁 Файлаас оруулах"}
+              </label>
+            </div>
+
+            {/* Or add by URL */}
+            <div className="banner-url-input">
+              <input
+                type="url"
+                value={newBannerUrl}
+                onChange={(e) => setNewBannerUrl(e.target.value)}
+                placeholder="Эсвэл URL хаяг оруулах..."
+              />
+              <button
+                type="button"
+                onClick={handleAddBannerUrl}
+                disabled={!newBannerUrl.trim() || bannerUploading}
+                className="admin-btn primary"
+              >
+                Нэмэх
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!isEdit && (
+          <div className="form-info">
+            💡 Banner зураг нэмэхийн тулд эхлээд мэдээг хадгална уу.
+          </div>
+        )}
 
         <div className="form-group">
           <label>Үндсэн зургийн URL (хуучин)</label>
@@ -321,33 +487,7 @@ export default function AdminArticleForm() {
         {/* Media Management Section - Only for Edit mode */}
         {isEdit && (
           <div className="media-section">
-            <h3>📷 Зураг / Видео удирдлага</h3>
-
-            {/* Banner Selection Dropdown */}
-            {media.length > 0 && (
-              <div className="banner-selector">
-                <label>🖼️ Banner зураг сонгох:</label>
-                <select
-                  value={bannerMediaId || ""}
-                  onChange={(e) => handleSetBanner(e.target.value || null)}
-                >
-                  <option value="">-- Banner сонгоогүй --</option>
-                  {media.filter(m => m.media_type === "image").map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.alt_text || `Зураг ${media.indexOf(item) + 1}`}
-                    </option>
-                  ))}
-                </select>
-                {bannerMediaId && (
-                  <div className="banner-preview">
-                    <img 
-                      src={media.find(m => m.id === bannerMediaId)?.url} 
-                      alt="Banner preview" 
-                    />
-                  </div>
-                )}
-              </div>
-            )}
+            <h3>📷 Нэмэлт зураг / Видео</h3>
 
             {/* Upload Area */}
             <div
