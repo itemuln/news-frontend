@@ -69,6 +69,47 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleToggleFeatured = async (article) => {
+    try {
+      const res = await fetch(`${API}/api/admin/articles/${article.id}/featured`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          is_featured: !article.is_featured,
+          featured_position: article.featured_position || 0,
+        }),
+      });
+
+      if (res.ok) {
+        fetchArticles();
+      }
+    } catch (err) {
+      alert("Алдаа гарлаа");
+    }
+  };
+
+  const handleToggleVisibility = async (article) => {
+    try {
+      const res = await fetch(`${API}/api/admin/articles/${article.id}/visibility`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ is_hidden: !article.is_hidden }),
+      });
+
+      if (res.ok) {
+        fetchArticles();
+      }
+    } catch (err) {
+      alert("Алдаа гарлаа");
+    }
+  };
+
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("mn-MN", {
       year: "numeric",
@@ -109,20 +150,19 @@ export default function AdminDashboard() {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Гарчиг</th>
                 <th>Эх сурвалж</th>
                 <th>Огноо</th>
+                <th>Төлөв</th>
                 <th>Үйлдэл</th>
               </tr>
             </thead>
             <tbody>
               {articles.map((article) => (
-                <tr key={article.id}>
-                  <td>{article.id}</td>
+                <tr key={article.id} className={article.is_hidden ? "hidden-row" : ""}>
                   <td className="article-headline">
-                    {article.headline?.slice(0, 60)}
-                    {article.headline?.length > 60 ? "..." : ""}
+                    {article.headline?.slice(0, 50)}
+                    {article.headline?.length > 50 ? "..." : ""}
                   </td>
                   <td>
                     <span className={`source-badge ${article.source || "facebook"}`}>
@@ -130,7 +170,26 @@ export default function AdminDashboard() {
                     </span>
                   </td>
                   <td>{formatDate(article.published_at)}</td>
+                  <td className="status-cell">
+                    {article.is_featured && <span className="status-badge featured">⭐ Онцлох</span>}
+                    {article.is_hidden && <span className="status-badge hidden">🙈 Нуусан</span>}
+                    {article.is_modified && <span className="status-badge modified">✏️</span>}
+                  </td>
                   <td className="actions">
+                    <button
+                      onClick={() => handleToggleFeatured(article)}
+                      className={`admin-btn small ${article.is_featured ? "warning" : ""}`}
+                      title={article.is_featured ? "Онцлохоос хасах" : "Онцлох болгох"}
+                    >
+                      {article.is_featured ? "⭐" : "☆"}
+                    </button>
+                    <button
+                      onClick={() => handleToggleVisibility(article)}
+                      className={`admin-btn small ${article.is_hidden ? "warning" : ""}`}
+                      title={article.is_hidden ? "Харуулах" : "Нуух"}
+                    >
+                      {article.is_hidden ? "👁️" : "🙈"}
+                    </button>
                     <Link
                       to={`/admin/articles/${article.id}/edit`}
                       className="admin-btn small"
