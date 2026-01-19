@@ -323,6 +323,32 @@ export default function AdminArticleForm() {
           <div className="media-section">
             <h3>📷 Зураг / Видео удирдлага</h3>
 
+            {/* Banner Selection Dropdown */}
+            {media.length > 0 && (
+              <div className="banner-selector">
+                <label>🖼️ Banner зураг сонгох:</label>
+                <select
+                  value={bannerMediaId || ""}
+                  onChange={(e) => handleSetBanner(e.target.value || null)}
+                >
+                  <option value="">-- Banner сонгоогүй --</option>
+                  {media.filter(m => m.media_type === "image").map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.alt_text || `Зураг ${media.indexOf(item) + 1}`}
+                    </option>
+                  ))}
+                </select>
+                {bannerMediaId && (
+                  <div className="banner-preview">
+                    <img 
+                      src={media.find(m => m.id === bannerMediaId)?.url} 
+                      alt="Banner preview" 
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Upload Area */}
             <div
               className={`upload-area ${dragActive ? "drag-active" : ""}`}
