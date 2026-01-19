@@ -14,8 +14,10 @@ export default function AdminDashboard() {
 
   // Banner modal state
   const [showBannerModal, setShowBannerModal] = useState(false);
-  const [bannerArticleId, setBannerArticleId] = useState("");
+  const [banners, setBanners] = useState([]);
   const [bannerUrl, setBannerUrl] = useState("");
+  const [bannerTitle, setBannerTitle] = useState("");
+  const [bannerLinkUrl, setBannerLinkUrl] = useState("");
   const [bannerUploading, setBannerUploading] = useState(false);
 
   const token = localStorage.getItem("adminToken");
@@ -126,17 +128,35 @@ export default function AdminDashboard() {
     });
   };
 
-  // Banner functions
+  // Fetch banners
+  const fetchBanners = useCallback(async () => {
+    try {
+      const res = await fetch(`${API}/api/admin/banners`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBanners(data);
+      }
+    } catch (err) {
+      console.error("Error fetching banners:", err);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchBanners();
+  }, [fetchBanners]);
+
+  // Banner functions - Standalone banners (just images, not tied to articles)
   const handleAddBannerByUrl = async () => {
-    if (!bannerArticleId || !bannerUrl.trim()) {
-      alert("Мэдээ болон URL сонгоно уу");
+    if (!bannerUrl.trim()) {
+      alert("Зургийн URL оруулна уу");
       return;
     }
 
     setBannerUploading(true);
     try {
-      // Add media to article
-      const res = await fetch(`${API}/api/admin/articles/${bannerArticleId}/media`, {
+      const res = await fetch(`${API}/api/admin/banners`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -144,30 +164,20 @@ export default function AdminDashboard() {
         },
         body: JSON.stringify({
           url: bannerUrl,
-          media_type: "image",
-          position: 0,
+          title: bannerTitle || null,
+          link_url: bannerLinkUrl || null,
+          position: banners.length,
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to add media");
-      
-      const newMedia = await res.json();
-
-      // Set as banner
-      await fetch(`${API}/api/admin/articles/${bannerArticleId}/banner`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ banner_media_id: newMedia.id }),
-      });
+      if (!res.ok) throw new Error("Failed to add banner");
 
       alert("Banner амжилттай нэмэгдлээ!");
       setShowBannerModal(false);
-      setBannerArticleId("");
       setBannerUrl("");
-      fetchArticles();
+      setBannerTitle("");
+      setBannerLinkUrl("");
+      fetchBanners();
     } catch (err) {
       alert("Banner нэмэхэд алдаа гарлаа");
     } finally {
@@ -176,46 +186,67 @@ export default function AdminDashboard() {
   };
 
   const handleBannerFileUpload = async (file) => {
-    if (!bannerArticleId || !file) {
-      alert("Мэдээ сонгоно уу");
-      return;
-    }
+    if (!file) return;
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("position", 0);
+    formData.append("title", bannerTitle || "");
+    formData.append("link_url", bannerLinkUrl || "");
+    formData.append("position", banners.length);
 
     setBannerUploading(true);
     try {
-      const res = await fetch(`${API}/api/admin/articles/${bannerArticleId}/upload`, {
+      const res = await fetch(`${API}/api/admin/banners/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
       if (!res.ok) throw new Error("Upload failed");
-      
-      const newMedia = await res.json();
-
-      // Set as banner
-      await fetch(`${API}/api/admin/articles/${bannerArticleId}/banner`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ banner_media_id: newMedia.id }),
-      });
 
       alert("Banner амжилттай нэмэгдлээ!");
       setShowBannerModal(false);
-      setBannerArticleId("");
       setBannerUrl("");
-      fetchArticles();
+      setBannerTitle("");
+      setBannerLinkUrl("");
+      fetchBanners();
     } catch (err) {
       alert("Banner оруулахад алдаа гарлаа");
     } finally {
       setBannerUploading(false);
+    }
+  };
+
+  const handleDeleteBanner = async (id) => {
+    if (!window.confirm("Энэ banner-ыг устгах уу?")) return;
+
+    try {
+      const res = await fetch(`${API}/api/admin/banners/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        fetchBanners();
+      }
+    } catch (err) {
+      alert("Устгахад алдаа гарлаа");
+    }
+  };
+
+  const handleToggleBannerActive = async (banner) => {
+    try {
+      await fetch(`${API}/api/admin/banners/${banner.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ is_active: !banner.is_active }),
+      });
+      fetchBanners();
+    } catch (err) {
+      alert("Алдаа гарлаа");
     }
   };
 
@@ -239,19 +270,19 @@ export default function AdminDashboard() {
           onClick={() => setShowBannerModal(true)} 
           className="admin-btn banner-btn"
         >
-          🖼️ Banner нэмэх
+          🖼️ Banner удирдах
         </button>
         <Link to="/" className="admin-btn secondary">
           ← Сайт руу буцах
         </Link>
       </div>
 
-      {/* Banner Modal */}
+      {/* Banner Modal - Standalone banners */}
       {showBannerModal && (
         <div className="modal-overlay" onClick={() => setShowBannerModal(false)}>
           <div className="modal-content banner-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>🖼️ Banner нэмэх</h2>
+              <h2>🖼️ Banner удирдлага</h2>
               <button 
                 className="modal-close" 
                 onClick={() => setShowBannerModal(false)}
@@ -261,30 +292,70 @@ export default function AdminDashboard() {
             </div>
             
             <div className="modal-body">
-              {/* Select Article */}
-              <div className="form-group">
-                <label>Мэдээ сонгох *</label>
-                <select
-                  value={bannerArticleId}
-                  onChange={(e) => setBannerArticleId(e.target.value)}
-                >
-                  <option value="">-- Мэдээ сонгоно уу --</option>
-                  {articles.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.headline?.slice(0, 50)}...
-                    </option>
+              {/* Existing Banners */}
+              {banners.length > 0 && (
+                <div className="banner-list">
+                  <label>Одоогийн banner-ууд:</label>
+                  {banners.map((banner) => (
+                    <div key={banner.id} className={`banner-list-item ${!banner.is_active ? 'inactive' : ''}`}>
+                      <img src={banner.url} alt={banner.title || 'Banner'} />
+                      <div className="banner-list-info">
+                        <span>{banner.title || 'Гарчиггүй'}</span>
+                      </div>
+                      <div className="banner-list-actions">
+                        <button
+                          onClick={() => handleToggleBannerActive(banner)}
+                          className={`admin-btn small ${banner.is_active ? '' : 'warning'}`}
+                          title={banner.is_active ? 'Идэвхгүй болгох' : 'Идэвхжүүлэх'}
+                        >
+                          {banner.is_active ? '👁️' : '🙈'}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteBanner(banner.id)}
+                          className="admin-btn small danger"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
                   ))}
-                </select>
+                </div>
+              )}
+
+              <div className="modal-divider">
+                <span>Шинэ banner нэмэх</span>
+              </div>
+
+              {/* Optional Title */}
+              <div className="form-group">
+                <label>Гарчиг (заавал биш)</label>
+                <input
+                  type="text"
+                  value={bannerTitle}
+                  onChange={(e) => setBannerTitle(e.target.value)}
+                  placeholder="Banner-ын гарчиг"
+                />
+              </div>
+
+              {/* Optional Link URL */}
+              <div className="form-group">
+                <label>Холбоос URL (заавал биш)</label>
+                <input
+                  type="url"
+                  value={bannerLinkUrl}
+                  onChange={(e) => setBannerLinkUrl(e.target.value)}
+                  placeholder="https://example.com/page"
+                />
               </div>
 
               {/* Upload File */}
               <div className="form-group">
-                <label>Файлаас оруулах</label>
+                <label>📁 Файлаас оруулах</label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleBannerFileUpload(e.target.files[0])}
-                  disabled={!bannerArticleId || bannerUploading}
+                  disabled={bannerUploading}
                 />
               </div>
 
@@ -294,7 +365,7 @@ export default function AdminDashboard() {
 
               {/* URL Input */}
               <div className="form-group">
-                <label>URL хаягаар нэмэх</label>
+                <label>🔗 URL хаягаар нэмэх</label>
                 <input
                   type="url"
                   value={bannerUrl}
@@ -306,7 +377,7 @@ export default function AdminDashboard() {
 
               <button
                 onClick={handleAddBannerByUrl}
-                disabled={!bannerArticleId || !bannerUrl.trim() || bannerUploading}
+                disabled={!bannerUrl.trim() || bannerUploading}
                 className="admin-btn primary large"
                 style={{ width: "100%" }}
               >

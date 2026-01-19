@@ -379,6 +379,50 @@
   font-size: 14px;
 }
 
+/* Banner List in Modal */
+.banner-list {
+  margin-bottom: 20px;
+}
+
+.banner-list > label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.banner-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.banner-list-item.inactive {
+  opacity: 0.5;
+}
+
+.banner-list-item img {
+  width: 80px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.banner-list-info {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+.banner-list-actions {
+  display: flex;
+  gap: 4px;
+}
+
 /* Pagination */
 .admin-pagination {
   padding: 20px;
