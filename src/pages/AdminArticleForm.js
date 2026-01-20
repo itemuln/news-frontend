@@ -372,69 +372,6 @@ export default function AdminArticleForm() {
           />
         </div>
 
-        {/* BANNER SECTION - Dedicated */}
-        {isEdit && (
-          <div className="banner-section">
-            <h3>🖼️ Banner зураг</h3>
-            
-            {/* Current Banner Preview */}
-            {bannerUrl ? (
-              <div className="current-banner">
-                <img src={bannerUrl} alt="Current banner" />
-                <button 
-                  type="button" 
-                  onClick={handleRemoveBanner}
-                  className="remove-banner-btn"
-                >
-                  ✕ Хасах
-                </button>
-              </div>
-            ) : (
-              <div className="no-banner">
-                <p>Banner зураг оруулаагүй байна</p>
-              </div>
-            )}
-
-            {/* Upload Banner */}
-            <div className="banner-upload-area">
-              <input
-                type="file"
-                id="bannerFileInput"
-                accept="image/*"
-                onChange={(e) => handleBannerUpload(e.target.files[0])}
-                style={{ display: "none" }}
-              />
-              <label htmlFor="bannerFileInput" className="admin-btn primary">
-                {bannerUploading ? "Оруулж байна..." : "📁 Файлаас оруулах"}
-              </label>
-            </div>
-
-            {/* Or add by URL */}
-            <div className="banner-url-input">
-              <input
-                type="url"
-                value={newBannerUrl}
-                onChange={(e) => setNewBannerUrl(e.target.value)}
-                placeholder="Эсвэл URL хаяг оруулах..."
-              />
-              <button
-                type="button"
-                onClick={handleAddBannerUrl}
-                disabled={!newBannerUrl.trim() || bannerUploading}
-                className="admin-btn primary"
-              >
-                Нэмэх
-              </button>
-            </div>
-          </div>
-        )}
-
-        {!isEdit && (
-          <div className="form-info">
-            💡 Banner зураг нэмэхийн тулд эхлээд мэдээг хадгална уу.
-          </div>
-        )}
-
         <div className="form-group">
           <label>Үндсэн зургийн URL (хуучин)</label>
           <input
