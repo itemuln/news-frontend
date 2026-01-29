@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import Home from "./pages/Home";
 import Article from "./pages/Article";
 import Search from "./pages/Search";
@@ -22,6 +23,7 @@ function App() {
         <Route path="/admin/articles/new" element={<AdminArticleForm />} />
         <Route path="/admin/articles/:id/edit" element={<AdminArticleForm />} />
       </Routes>
+      <Analytics />
     </div>
   );
 }
